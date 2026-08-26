@@ -275,12 +275,13 @@ def create_group_chat(
                                 app_ctx=app_ctx))
 
     if is_gemini or is_groq or (has_openai and not has_azure):
+        response_fmt = {"type": "json_object"}
         if model_supports_temperature():
             settings = OpenAIChatPromptExecutionSettings(
-                function_choice_behavior=FunctionChoiceBehavior.Auto(), seed=42, temperature=0, response_format=ChatRule)
+                function_choice_behavior=FunctionChoiceBehavior.Auto(), seed=42, temperature=0, response_format=response_fmt)
         else:
             settings = OpenAIChatPromptExecutionSettings(
-                function_choice_behavior=FunctionChoiceBehavior.Auto(), seed=42, response_format=ChatRule)
+                function_choice_behavior=FunctionChoiceBehavior.Auto(), seed=42, response_format=response_fmt)
     else:
         if model_supports_temperature():
             settings = AzureChatPromptExecutionSettings(
@@ -318,7 +319,9 @@ def create_group_chat(
             - **Default to {facilitator}**: Always default to {facilitator}. If no other participant is specified, {facilitator} goes next.
             - **Use best judgment**: If the rules are unclear, use your best judgment to determine who should go next, for the natural flow of the conversation.
             
-        **Output**: Give the full reasoning for your choice and the verdict. The reasoning should include careful evaluation of each rule with an explanation. The verdict should be the name of the participant who should go next.
+        **Output Format**: Respond strictly in valid JSON format:
+        {{"verdict": "<exact_agent_name>", "reasoning": "<explanation>"}}
+        The verdict MUST be the exact name of the participant who should go next.
 
         History:
         {{{{$history}}}}
@@ -341,7 +344,8 @@ def create_group_chat(
         Determine if the conversation should end based on the most recent message.
         You only have access to the last message in the conversation.
 
-        Reply by giving your full reasoning, and the verdict. The verdict should be either "yes" or "no".
+        You MUST respond strictly in valid JSON format:
+        {{"verdict": "yes" or "no", "reasoning": "<explanation>"}}
 
         You are part of a group chat with several AI agents and a user. 
         The agents are names are: 
@@ -388,8 +392,13 @@ def create_group_chat(
                     if val.startswith("json"):
                         val = val[4:]
                     val = val.strip()
-            rule = ChatRule.model_validate_json(val)
-            return rule.verdict.lower() == "yes"
+            try:
+                data = json.loads(val)
+                verdict = str(data.get("verdict", "")).lower()
+            except Exception:
+                rule = ChatRule.model_validate_json(val)
+                verdict = rule.verdict.lower()
+            return verdict == "yes"
         except Exception as e:
             logger.warning(f"Error parsing termination verdict, fallback check: {e}")
             val_lower = str(result.value[0]).lower() if result and getattr(result, "value", None) else ""
@@ -406,14 +415,31 @@ def create_group_chat(
                     if val.startswith("json"):
                         val = val[4:]
                     val = val.strip()
-            rule = ChatRule.model_validate_json(val)
-            return rule.verdict if rule.verdict in [agent["name"] for agent in all_agents_config] else facilitator
-        except Exception as e:
-            logger.warning(f"Error parsing selection verdict, fallback agent match: {e}")
+            verdict = None
+            try:
+                data = json.loads(val)
+                verdict = data.get("verdict")
+            except Exception:
+                try:
+                    rule = ChatRule.model_validate_json(val)
+                    verdict = rule.verdict
+                except Exception:
+                    pass
+
+            if verdict:
+                verdict_str = str(verdict).strip()
+                for agent in all_agents_config:
+                    if agent["name"].lower() == verdict_str.lower():
+                        return agent["name"]
+
             val_str = str(result.value[0]) if result and getattr(result, "value", None) else ""
             for agent in all_agents_config:
                 if agent["name"].lower() in val_str.lower():
                     return agent["name"]
+
+            return facilitator
+        except Exception as e:
+            logger.warning(f"Error parsing selection verdict, fallback agent match: {e}")
             return facilitator
 
     chat = AgentGroupChat(
