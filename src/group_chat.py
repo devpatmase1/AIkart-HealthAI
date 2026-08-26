@@ -51,6 +51,10 @@ class RateLimitedOpenAIChatCompletion(OpenAIChatCompletion):
     """Subclass of OpenAIChatCompletion that catches 429 rate limit errors and retries with backoff."""
 
     async def _send_completion_request(self, settings_dict):
+        # Stripping 'seed' parameter for Gemini API compatibility as Gemini rejects payload containing 'seed'
+        if (os.getenv("GEMINI_API_KEY") or "generativelanguage.googleapis.com" in str(settings_dict)) and "seed" in settings_dict:
+            settings_dict.pop("seed", None)
+
         max_attempts = 5
         for attempt in range(max_attempts):
             try:
@@ -252,7 +256,10 @@ def create_group_chat(
             logger.info(
                 f"Model does not support temperature. Setting temperature to None for agent {agent_config['name']}")
 
-        if is_gemini or is_groq or (has_openai and not has_azure):
+        if is_gemini:
+            settings = OpenAIChatPromptExecutionSettings(
+                function_choice_behavior=FunctionChoiceBehavior.Auto(), temperature=temperature)
+        elif is_groq or (has_openai and not has_azure):
             settings = OpenAIChatPromptExecutionSettings(
                 function_choice_behavior=FunctionChoiceBehavior.Auto(), seed=42, temperature=temperature)
         else:
@@ -274,7 +281,15 @@ def create_group_chat(
                                 chat_ctx=chat_ctx,
                                 app_ctx=app_ctx))
 
-    if is_gemini or is_groq or (has_openai and not has_azure):
+    if is_gemini:
+        response_fmt = {"type": "json_object"}
+        if model_supports_temperature():
+            settings = OpenAIChatPromptExecutionSettings(
+                temperature=0, response_format=response_fmt)
+        else:
+            settings = OpenAIChatPromptExecutionSettings(
+                response_format=response_fmt)
+    elif is_groq or (has_openai and not has_azure):
         response_fmt = {"type": "json_object"}
         if model_supports_temperature():
             settings = OpenAIChatPromptExecutionSettings(

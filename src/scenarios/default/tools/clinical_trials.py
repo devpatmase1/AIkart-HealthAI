@@ -147,8 +147,18 @@ class ClinicalTrialsPlugin:
                                           'staging': staging,
                                       }, indent=4))
 
+        is_gemini = bool(os.getenv("GEMINI_API_KEY"))
+        is_groq = bool(os.getenv("GROQ_API_KEY"))
+        has_openai = bool(os.getenv("OPENAI_API_KEY"))
+        has_azure = bool(os.getenv("AZURE_OPENAI_ENDPOINT") or os.getenv("AZURE_OPENAI_API_KEY"))
+
+        if is_gemini or is_groq or (has_openai and not has_azure):
+            settings = OpenAIChatPromptExecutionSettings()
+        else:
+            settings = AzureChatPromptExecutionSettings()
+
         chat_completion_response = await self.chat_completion_service.get_chat_message_content(
-            chat_history=chat_history, settings=AzureChatPromptExecutionSettings())
+            chat_history=chat_history, settings=settings)
         logger.info(f"Generated search query: {chat_completion_response}")
         return str(chat_completion_response)
 
