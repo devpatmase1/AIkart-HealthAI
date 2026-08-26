@@ -117,8 +117,17 @@ export const api: ChatAPI = {
                         // Check for error messages
                         if (data.error) {
                             console.error('WebSocket error:', data.error);
-                            reject(new Error(data.error));
+                            const errorMessage: Message = {
+                                id: 'error-' + Date.now(),
+                                content: `Server Error: ${data.error}`,
+                                sender: "System",
+                                timestamp: new Date(),
+                                isBot: true
+                            };
+                            onMessageCallback(errorMessage);
+                            messagesReceived++;
                             ws?.close();
+                            resolve();
                             return;
                         }
                         

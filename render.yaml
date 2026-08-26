@@ -10,6 +10,6 @@ services:
       - key: SCENARIO
         value: default
       - key: OPENAI_MODEL_ID
-        value: gemini-2.5-flash
+        value: gemini-2.0-flash
       - key: APP_BLOB_STORAGE_ENDPOINT
         value: local
