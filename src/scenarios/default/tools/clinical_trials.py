@@ -79,13 +79,21 @@ class ClinicalTrialsPlugin:
 
         # Clinical trial matching works better with a reasoning model
         is_groq = bool(os.getenv("GROQ_API_KEY"))
+        is_gemini = bool(os.getenv("GEMINI_API_KEY"))
         has_openai = bool(os.getenv("OPENAI_API_KEY"))
         has_azure = bool(os.getenv("AZURE_OPENAI_ENDPOINT") or os.getenv("AZURE_OPENAI_API_KEY"))
 
-        if is_groq or (has_openai and not has_azure):
-            api_key = os.getenv("GROQ_API_KEY") or os.getenv("OPENAI_API_KEY")
-            base_url = os.getenv("OPENAI_BASE_URL") or ("https://api.groq.com/openai/v1" if is_groq else None)
-            default_model = "openai/gpt-oss-120b" if is_groq else "gpt-4o"
+        if is_gemini or is_groq or (has_openai and not has_azure):
+            api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GROQ_API_KEY") or os.getenv("OPENAI_API_KEY")
+            if is_gemini:
+                base_url = os.getenv("OPENAI_BASE_URL") or "https://generativelanguage.googleapis.com/v1beta/openai/"
+                default_model = "gemini-2.5-flash"
+            elif is_groq:
+                base_url = os.getenv("OPENAI_BASE_URL") or "https://api.groq.com/openai/v1"
+                default_model = "openai/gpt-oss-120b"
+            else:
+                base_url = os.getenv("OPENAI_BASE_URL")
+                default_model = "gpt-4o"
             model_id = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME_REASONING_MODEL") or os.getenv("OPENAI_MODEL_ID", default_model)
 
             if base_url:

@@ -22,13 +22,35 @@ def convert_tools(agent: Agent):
 
 def create_magentic_chat(chat: AgentGroupChat, app_context: AppContext, input_func) -> MagenticOneGroupChat:
     agent_config = app_context.all_agent_configs
-    az_model_client = AzureOpenAIChatCompletionClient(
-        azure_deployment=os.environ["AZURE_OPENAI_DEPLOYMENT_NAME"],
-        model=os.environ["AZURE_OPENAI_DEPLOYMENT_NAME"],
-        api_version="2025-04-01-preview",
-        azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
-        azure_ad_token_provider=app_context.cognitive_services_token_provider,
-    )
+    is_groq = bool(os.getenv("GROQ_API_KEY"))
+    is_gemini = bool(os.getenv("GEMINI_API_KEY"))
+    has_openai = bool(os.getenv("OPENAI_API_KEY"))
+
+    if is_gemini or is_groq or has_openai:
+        from autogen_ext.models.openai import OpenAIChatCompletionClient
+        api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GROQ_API_KEY") or os.getenv("OPENAI_API_KEY")
+        if is_gemini:
+            base_url = os.getenv("OPENAI_BASE_URL") or "https://generativelanguage.googleapis.com/v1beta/openai/"
+            model = os.getenv("OPENAI_MODEL_ID", "gemini-2.5-flash")
+        elif is_groq:
+            base_url = os.getenv("OPENAI_BASE_URL") or "https://api.groq.com/openai/v1"
+            model = os.getenv("OPENAI_MODEL_ID", "openai/gpt-oss-120b")
+        else:
+            base_url = os.getenv("OPENAI_BASE_URL")
+            model = os.getenv("OPENAI_MODEL_ID", "gpt-4o")
+
+        kwargs = {"model": model, "api_key": api_key}
+        if base_url:
+            kwargs["base_url"] = base_url
+        az_model_client = OpenAIChatCompletionClient(**kwargs)
+    else:
+        az_model_client = AzureOpenAIChatCompletionClient(
+            azure_deployment=os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME", "gpt-4o"),
+            model=os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME", "gpt-4o"),
+            api_version="2025-04-01-preview",
+            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT", ""),
+            azure_ad_token_provider=app_context.cognitive_services_token_provider if hasattr(app_context, "cognitive_services_token_provider") else None,
+        )
 
     assistants = [
         AssistantAgent(agent.name, model_client=az_model_client, tools=convert_tools(agent),
