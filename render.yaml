@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: aikart-healthai
+    env: python
+    buildCommand: "cd democlient && npm install && npm run build && cd .. && pip install -r requirements.txt"
+    startCommand: "python -m uvicorn app:app --host 0.0.0.0 --port $PORT --app-dir src"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.12
+      - key: SCENARIO
+        value: default

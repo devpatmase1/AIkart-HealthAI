@@ -1,0 +1,80 @@
+{
+  "conversation_id": "a4b2bda1-c862-422b-9275-e9ca79af99d8",
+  "chat_history": "{\n  \"messages\": [\n    {\n      \"metadata\": {},\n      \"content_type\": \"message\",\n      \"role\": \"user\",\n      \"items\": [\n        {\n          \"metadata\": {},\n          \"content_type\": \"text\",\n          \"text\": \"PatientHistory create patient timeline for patient id patient_4\"\n        }\n      ]\n    },\n    {\n      \"ai_model_id\": \"openai/gpt-oss-120b\",\n      \"metadata\": {\n        \"logprobs\": null,\n        \"id\": \"chatcmpl-38875735-951b-4290-938e-da0685cfd33a\",\n        \"created\": 1787152158,\n        \"system_fingerprint\": \"fp_bb691ea66b\",\n        \"usage\": {\n          \"prompt_tokens\": 1080,\n          \"completion_tokens\": 220,\n          \"completion_tokens_details\": {\n            \"reasoning_tokens\": 137\n          }\n        }\n      },\n      \"content_type\": \"message\",\n      \"role\": \"assistant\",\n      \"name\": \"Orchestrator\",\n      \"items\": [\n        {\n          \"metadata\": {},\n          \"content_type\": \"text\",\n          \"text\": \"**Plan**\\n\\n1. **PatientHistory** \u2013 Retrieve the patient timeline for **patient ID\u202fpatient_4**.  \\n   *After providing the timeline, please end your response with \u201cback to you: *Orchestrator*\u201d.*\\n\\n---\\n\\n*User*, does this plan look good to you? If so, I\u2019ll ask **PatientHistory** to proceed.\"\n        }\n      ],\n      \"finish_reason\": \"stop\"\n    },\n    {\n      \"metadata\": {},\n      \"content_type\": \"message\",\n      \"role\": \"user\",\n      \"items\": [\n        {\n          \"metadata\": {},\n          \"content_type\": \"text\",\n          \"text\": \"Orchestrator prepare tumor board for patient id patient_4\"\n        }\n      ]\n    },\n    {\n      \"ai_model_id\": \"openai/gpt-oss-120b\",\n      \"metadata\": {\n        \"logprobs\": null,\n        \"id\": \"chatcmpl-3f9719f3-bbb0-47d5-a08e-62677f604ce6\",\n        \"created\": 1787152186,\n        \"system_fingerprint\": \"fp_90620edd96\",\n        \"usage\": {\n          \"prompt_tokens\": 1180,\n          \"completion_tokens\": 575,\n          \"completion_tokens_details\": {\n            \"reasoning_tokens\": 199\n          }\n        }\n      },\n      \"content_type\": \"message\",\n      \"role\": \"assistant\",\n      \"name\": \"Orchestrator\",\n      \"items\": [\n        {\n          \"metadata\": {},\n          \"content_type\": \"text\",\n          \"text\": \"**Proposed Plan to Prepare a Tumor\u2011Board Report for *patient_4***  \\n\\n| Step | Agent | What the agent will provide | What the agent needs |\\n|------|-------|----------------------------|----------------------|\\n| 1 | **PatientHistory** | Full patient timeline, medical history, social history, and any imaging files that are on record. | Patient ID **patient_4** |\\n| 2 | **PatientStatus** | Current oncologic status (age, stage, primary site, histology, biomarkers, prior treatments, ECOG). | Information from **PatientHistory** (or the patient ID again) |\\n| 3 | **Radiology** | Radiology insights (CT\u2011scan findings, chest X\u2011ray findings, etc.). | The imaging files referenced by **PatientHistory** (or a link to the images) |\\n| 4 | **ClinicalGuidelines** | Evidence\u2011based treatment recommendations based on the current status. | The **PatientStatus** output |\\n| 5 | **ClinicalTrials** | Relevant clinical\u2011trial options for this patient. | The **PatientStatus** output |\\n| 6 | **ReportCreation** | A complete Word\u2011document ready for tumor\u2011board review, incorporating the timeline, clinical summary, imaging findings, pathology, treatment plan, and trial options. | All previous outputs (timeline, status, radiology insights, treatment recommendations, trial list) |\\n\\n**Execution rule:** After each agent finishes its task, it must end its reply with the phrase **\u201cback to you: *Orchestrator*\u201d** so I can continue to the next step.\\n\\n---\\n\\n*User*, does this plan look good to you? If you approve, I\u2019ll start by asking **PatientHistory** to retrieve the timeline for **patient_4**.\"\n        }\n      ],\n      \"finish_reason\": \"stop\"\n    },\n    {\n      \"metadata\": {},\n      \"content_type\": \"message\",\n      \"role\": \"user\",\n      \"items\": [\n        {\n          \"metadata\": {},\n          \"content_type\": \"text\",\n          \"text\": \"Orchestrator Yes, this plan looks great, please proceed\"\n        }\n      ]\n    },\n    {\n      \"ai_model_id\": \"openai/gpt-oss-120b\",\n      \"metadata\": {\n        \"logprobs\": null,\n        \"id\": \"chatcmpl-f69c1625-13c2-42c8-8f10-78154296833c\",\n        \"created\": 1787154025,\n        \"system_fingerprint\": \"fp_77b12279f9\",\n        \"usage\": {\n          \"prompt_tokens\": 1573,\n          \"completion_tokens\": 120,\n          \"completion_tokens_details\": {\n            \"reasoning_tokens\": 43\n          }\n        },\n        \"agent_id\": \"d2c0e402-4a16-4d81-acb2-249b389bdb64\"\n      },\n      \"content_type\": \"message\",\n      \"role\": \"assistant\",\n      \"name\": \"Orchestrator\",\n      \"items\": [\n        {\n          \"metadata\": {},\n          \"content_type\": \"text\",\n          \"text\": \"**Step\u202f1 \u2013 PatientHistory**\\n\\n*PatientHistory*, please retrieve the full patient timeline, medical history, social history, and any imaging files on record for **patient ID\u202fpatient_4**.  \\nWhen you have provided the information, end your response with:\\n\\n**\u201cback to you: *Orchestrator*\u201d**.\"\n        }\n      ],\n      \"finish_reason\": \"stop\"\n    },\n    {\n      \"ai_model_id\": \"openai/gpt-oss-120b\",\n      \"metadata\": {\n        \"logprobs\": null,\n        \"id\": \"chatcmpl-b75a21a4-c7ae-4ceb-a613-8bafea4fcc03\",\n        \"created\": 1787154109,\n        \"system_fingerprint\": \"fp_e1a78f200e\",\n        \"usage\": {\n          \"prompt_tokens\": 2818,\n          \"completion_tokens\": 669,\n          \"completion_tokens_details\": {\n            \"reasoning_tokens\": 457\n          }\n        },\n        \"agent_id\": \"5e0d4b89-f6ef-426c-94b3-ece7289f562c\"\n      },\n      \"content_type\": \"message\",\n      \"role\": \"assistant\",\n      \"name\": \"PatientHistory\",\n      \"items\": [\n        {\n          \"metadata\": {},\n          \"content_type\": \"text\",\n          \"text\": \"Here\u2019s the situation:\u202fthe patient\u2019s record contains a large number of clinical notes, and when I ask the system to process **all** of them at once it exceeds the token\u2011limit for the model. To give you a useful, concise timeline I need to narrow the scope of the request (for example, focus on a specific time\u2011period, a particular diagnosis, or a limited number of key events).\\n\\n**Could you let me know which part of the record you\u2019d like to see summarized?**  \\n- A date range (e.g., \u201cfrom the initial diagnosis in\u202f2022 to the most recent visit\u201d)  \\n- Specific types of events (e.g., \u201csurgeries, chemotherapy cycles, and imaging results\u201d)  \\n- Or a maximum number of bullet points you\u2019d like (e.g., \u201cthe 5 most important milestones\u201d).\\n\\nOnce I have that guidance I can generate the requested timeline within the token limits.  \\n\\n*Please let me know how you\u2019d like to narrow the request.*\"\n        }\n      ],\n      \"finish_reason\": \"stop\"\n    },\n    {\n      \"ai_model_id\": \"openai/gpt-oss-120b\",\n      \"metadata\": {\n        \"logprobs\": null,\n        \"id\": \"chatcmpl-086f3591-66b2-436c-8520-54f38c543fbe\",\n        \"created\": 1787154157,\n        \"system_fingerprint\": \"fp_77b12279f9\",\n        \"usage\": {\n          \"prompt_tokens\": 3748,\n          \"prompt_tokens_details\": {\n            \"cached_tokens\": 1536\n          },\n          \"completion_tokens\": 309,\n          \"completion_tokens_details\": {\n            \"reasoning_tokens\": 85\n          }\n        }\n      },\n      \"content_type\": \"message\",\n      \"role\": \"assistant\",\n      \"name\": \"Orchestrator\",\n      \"items\": [\n        {\n          \"metadata\": {},\n          \"content_type\": \"text\",\n          \"text\": \"**Orchestrator**\\n\\n*PatientHistory* has accessed the record for **patient_4** and found that the volume of clinical notes exceeds the token limit for a single\u2011pass summary. To create a concise timeline that fits within the limits, I need a bit of guidance from you.\\n\\n**Please let me know how you\u2019d like the timeline narrowed, for example:**\\n\\n1. **Date range** \u2013 e.g., \u201cfrom the initial diagnosis in\u202f2022 to the most recent visit in\u202f2024.\u201d\\n2. **Event types** \u2013 e.g., \u201conly surgeries, chemotherapy cycles, and imaging results.\u201d\\n3. **Number of bullet points** \u2013 e.g., \u201cthe 5 most important milestones.\u201d\\n4. **Any other specific focus** you have in mind.\\n\\nOnce you specify the scope, I will ask *PatientHistory* to generate the requested timeline, then continue with the remaining steps (PatientStatus, Radiology, ClinicalGuidelines, ClinicalTrials, and ReportCreation).  \\n\\n*User*, could you provide the preferred scope for the timeline?\"\n        }\n      ],\n      \"finish_reason\": \"stop\"\n    }\n  ]\n}",
+  "patient_id": "patient_4",
+  "patient_data": [
+    {
+      "id": "0ab80fbd-9c7a-4bce-abd8-1ba44c86ec94",
+      "type": "clinical note"
+    },
+    {
+      "id": "31bbcfb4-704e-4e28-8f33-f0db97d5598d",
+      "type": "clinical note"
+    },
+    {
+      "id": "39c1c467-6e6a-4e2f-b82e-b70750cbd933",
+      "type": "clinical note"
+    },
+    {
+      "id": "47b10e30-fc09-4438-a2c8-44741aac610f",
+      "type": "clinical note"
+    },
+    {
+      "id": "4a16150f-c95e-47cd-81a4-78511581d635",
+      "type": "clinical note"
+    },
+    {
+      "id": "5184613c-11f7-4ecb-985a-1920daba51c1",
+      "type": "clinical note"
+    },
+    {
+      "id": "853d37db-1ee9-45d5-a888-e942235351b5",
+      "type": "clinical note"
+    },
+    {
+      "id": "86a93cdb-da8b-4c9a-b07c-641a19fb5ed9",
+      "type": "clinical note"
+    },
+    {
+      "id": "91ad6865-6998-4f5b-89f0-3efc4d641c9c",
+      "type": "clinical note"
+    },
+    {
+      "id": "97e2279b-a283-46b2-a246-9c061b163b0b",
+      "type": "clinical note"
+    },
+    {
+      "id": "99b1079d-3420-4197-ac7d-708c97203f2e",
+      "type": "clinical note"
+    },
+    {
+      "id": "a550f679-3604-4bdc-9308-573329d886d1",
+      "type": "clinical note"
+    },
+    {
+      "id": "a73bad38-58eb-48ea-8104-8692fc6c6096",
+      "type": "clinical note"
+    },
+    {
+      "id": "b41550bb-2fd8-4963-9443-92a2429d4dbb",
+      "type": "clinical note"
+    },
+    {
+      "id": "cc7a9b1c-6bfe-49c2-9255-85022eda4dbc",
+      "type": "clinical note"
+    },
+    {
+      "id": "f051320d-2f94-4daa-a819-05c8eff11b3f",
+      "type": "clinical note"
+    },
+    {
+      "filename": "x-ray.png",
+      "type": "x-ray image",
+      "url": "http://localhost:8000/patient_data/patient_4/images/x-ray.png"
+    }
+  ],
+  "display_blob_urls": [],
+  "display_clinical_trials": [],
+  "output_data": [],
+  "healthcare_agents": {}
+}

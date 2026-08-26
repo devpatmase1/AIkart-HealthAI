@@ -1,0 +1,69 @@
+name: healthcare-agent-orchestrator
+metadata:
+  template: healthcare-agent-orchestrator@0.0.1
+services:
+  healthcare-agent-orchestrator-app:
+    project: src
+    host: appservice
+    language: python
+    hooks:
+      prepackage:
+        windows:
+          shell: pwsh
+          run: ../scripts/build-frontend.ps1
+          interactive: true
+          continueOnError: false
+        posix:
+          shell: sh
+          run: ../scripts/build-frontend.sh
+          interactive: true
+          continueOnError: false
+hooks:
+  preprovision:
+    windows:
+      shell: pwsh
+      run: |
+        if (-not ($(azd env get-values SCENARIO) -match "SCENARIO")) {
+          Write-Host "Setting default as default SCENARIO"
+          azd env set SCENARIO default
+        }
+        if (-not ($(azd env get-values EXCLUDED_AGENTS) -match "EXCLUDED_AGENTS")) {
+          Write-Host "Excluding MedicalResearch and Radiology Agent"
+          azd env set EXCLUDED_AGENTS "MedicalResearch,Radiology"
+        }
+    posix:
+      shell: sh
+      run: |
+        while IFS='=' read -r key value; do
+            value=$(echo "$value" | sed 's/^"//' | sed 's/"$//')
+            export "$key=$value"
+        done <<EOF
+        $(azd env get-values)
+        EOF
+
+        if [ -z "$SCENARIO" ]; then
+          echo "Setting default as default SCENARIO"
+          azd env set SCENARIO default
+        fi
+        if [ -z "$EXCLUDED_AGENTS" ]; then
+          echo "Excluding MedicalResearch and Radiology Agent"
+          azd env set EXCLUDED_AGENTS "MedicalResearch,Radiology"
+        fi
+  postprovision:
+    windows:
+      shell: pwsh
+      run: |
+        Copy-Item ".azure/$(azd env get-value AZURE_ENV_NAME)/.env" -Destination "src/.env"
+        ./scripts/generateTeamsApp.ps1 -manifestFileDirectory "./teamsApp" -output "./output"
+        ./scripts/uploadPatientData.ps1
+        ./scripts/appIdUpdateRedirectUrl.ps1
+      interactive: false
+      continueOnError: false
+    posix:
+      shell: sh
+      run: |
+        cp .azure/$(azd env get-value AZURE_ENV_NAME)/.env src/.env
+        ./scripts/generateTeamsApp.sh -manifestFileDirectory "./teamsApp" -output "./output"
+        ./scripts/uploadPatientData.sh
+      interactive: false
+      continueOnError: false

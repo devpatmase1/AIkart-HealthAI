@@ -1,0 +1,121 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": {
+      "value": "${AZURE_ENV_NAME}"
+    },
+    "aiServicesName": {
+      "value": "${AZURE_AISERVICES_NAME}"
+    },
+    "aiHubName": {
+      "value": "${AZURE_AIHUB_NAME}"
+    },
+    "storageName": {
+      "value": "${AZURE_STORAGE_NAME}"
+    },
+    "appStorageName": {
+      "value": "${APP_STORAGE_NAME}"
+    },
+    "keyVaultName": {
+      "value": "${AZURE_KEYVAULT_NAME}"
+    },
+    "msiName": {
+      "value": "${AZURE_MSI_NAME}"
+    },
+    "appPlanName": {
+      "value": "${AZURE_APPPLAN_NAME}"
+    },
+    "appName": {
+      "value": "${AZURE_APP_NAME}"
+    },
+    "myPrincipalType": {
+      "value": "${AZURE_PRINCIPAL_TYPE}"
+    },
+    "myPrincipalId": {
+      "value": "${AZURE_PRINCIPAL_ID}"
+    },
+    "model": {
+      "value": "${Azure_OPENAI_MODEL}"
+    },
+    "modelCapacity": {
+      "value": "${Azure_OPENAI_MODEL_CAPACITY}"
+    },
+    "modelSku": {
+      "value": "${Azure_OPENAI_MODEL_SKU}"
+    },
+    "gptDeploymentLocation": {
+      "value": "${AZURE_GPT_LOCATION}"
+    },
+    "hlsDeploymentLocation": {
+      "value": "${AZURE_HLS_LOCATION}"
+    },
+    "hlsModelEndpoints": {
+      "value": {
+        "cxr_report_gen": "${CXR_REPORT_GEN_ENDPOINT}"
+      }
+    },
+    "instanceType": {
+      "value": "${GPU_INSTANCE_TYPE}"
+    },
+    "appServiceLocation": {
+      "value": "${AZURE_APPSERVICE_LOCATION}"
+    },
+    "botServiceLocation": {
+      "value": "${AZURE_BOT_SERVICE_LOCATION}"
+    },
+    "healthcareAgentServiceLocation": {
+      "value": "${HEALTHCARE_AGENT_SERVICE_LOCATION}"
+    },
+    "keyVaultLocation": {
+      "value": "${AZURE_KEYVAULT_LOCATION}"
+    },
+    "msiLocation": {
+      "value": "${AZURE_MSI_LOCATION}"
+    },
+    "storageAccountLocation": {
+      "value": "${AZURE_STORAGEACCOUNT_LOCATION}"
+    },
+    "aiEndpointReasoningOverride": {
+      "value": "${AI_ENDPOINT_REASONING_OVERRIDE}"
+    },
+    "azureOpenaiDeploymentNameReasoningModelOverride": {
+      "value": "${AZURE_OPENAI_DEPLOYMENT_NAME_REASONING_MODEL_OVERRIDE}"
+    },
+    "authClientId": {
+      "value": "${CLIENT_ID}"
+    },
+    "additionalAllowedIps": {
+      "value": "${ADDITIONAL_ALLOWED_IPS}"
+    },
+    "additionalAllowedTenantIds": {
+      "value": "${ADDITIONAL_ALLOWED_TENANT_IDS}"
+    },
+    "additionalAllowedUserIds": {
+      "value": "${ADDITIONAL_ALLOWED_USER_IDS}"
+    },
+    "graphRagSubscriptionKey": {
+      "value": "${GRAPH_RAG_SUBSCRIPTION_KEY}"
+    },
+    "scenario": {
+      "value": "${SCENARIO}"
+    },
+    "excludedAgents": {
+      "value": "${EXCLUDED_AGENTS}"
+    },
+    "clinicalNotesSource": {
+      "value": "${CLINICAL_NOTES_SOURCE}"
+    },
+    "fhirServiceEndpoint": {
+      "value": "${FHIR_SERVICE_ENDPOINT}"
+    },
+    "tags": {
+      "value": {
+        "Owner": "AI Team",
+        "Project": "healthcare-agent-orchestrator",
+        "Environment": "Dev",
+        "Toolkit": "Bicep"
+      }
+    }
+  }
+}
