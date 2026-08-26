@@ -278,17 +278,17 @@ def create_group_chat(
         response_fmt = {"type": "json_object"}
         if model_supports_temperature():
             settings = OpenAIChatPromptExecutionSettings(
-                function_choice_behavior=FunctionChoiceBehavior.Auto(), seed=42, temperature=0, response_format=response_fmt)
+                seed=42, temperature=0, response_format=response_fmt)
         else:
             settings = OpenAIChatPromptExecutionSettings(
-                function_choice_behavior=FunctionChoiceBehavior.Auto(), seed=42, response_format=response_fmt)
+                seed=42, response_format=response_fmt)
     else:
         if model_supports_temperature():
             settings = AzureChatPromptExecutionSettings(
-                function_choice_behavior=FunctionChoiceBehavior.Auto(), seed=42, temperature=0, response_format=ChatRule)
+                seed=42, temperature=0, response_format=ChatRule)
         else:
             settings = AzureChatPromptExecutionSettings(
-                function_choice_behavior=FunctionChoiceBehavior.Auto(), seed=42, response_format=ChatRule)
+                seed=42, response_format=ChatRule)
 
     facilitator_agent = next((agent for agent in all_agents_config if agent.get("facilitator")), all_agents_config[0])
     facilitator = facilitator_agent["name"]
@@ -442,17 +442,36 @@ def create_group_chat(
             logger.warning(f"Error parsing selection verdict, fallback agent match: {e}")
             return facilitator
 
+    class SafeKernelFunctionSelectionStrategy(KernelFunctionSelectionStrategy):
+        async def next(self, agents: list, history: list) -> any:
+            try:
+                return await super().next(agents, history)
+            except Exception as e:
+                logger.warning(f"Selection strategy exception caught safely ({e}), defaulting to facilitator: {facilitator}")
+                for agent in agents:
+                    if agent.name.lower() == facilitator.lower():
+                        return agent
+                return agents[0]
+
+    class SafeKernelFunctionTerminationStrategy(KernelFunctionTerminationStrategy):
+        async def should_terminate(self, agent: any, history: list) -> bool:
+            try:
+                return await super().should_terminate(agent, history)
+            except Exception as e:
+                logger.warning(f"Termination strategy exception caught safely ({e}), defaulting to False")
+                return False
+
     chat = AgentGroupChat(
         agents=agents,
         chat_history=chat_ctx.chat_history,
-        selection_strategy=KernelFunctionSelectionStrategy(
+        selection_strategy=SafeKernelFunctionSelectionStrategy(
             function=selection_function,
             kernel=_create_kernel_with_chat_completion(),
             result_parser=evaluate_selection,
             agent_variable_name="agents",
             history_variable_name="history",
         ),
-        termination_strategy=KernelFunctionTerminationStrategy(
+        termination_strategy=SafeKernelFunctionTerminationStrategy(
             agents=[
                 agent for agent in agents if agent.name == facilitator
             ],  # Only facilitator decides if the conversation ends
