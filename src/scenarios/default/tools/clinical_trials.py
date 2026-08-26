@@ -87,7 +87,7 @@ class ClinicalTrialsPlugin:
             api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GROQ_API_KEY") or os.getenv("OPENAI_API_KEY")
             if is_gemini:
                 base_url = os.getenv("OPENAI_BASE_URL") or "https://generativelanguage.googleapis.com/v1beta/openai/"
-                default_model = "gemini-2.0-flash"
+                default_model = "gemini-3.6-flash"
             elif is_groq:
                 base_url = os.getenv("OPENAI_BASE_URL") or "https://api.groq.com/openai/v1"
                 default_model = "openai/gpt-oss-120b"
