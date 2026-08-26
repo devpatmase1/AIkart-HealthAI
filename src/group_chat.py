@@ -252,7 +252,7 @@ def create_group_chat(
             logger.info(
                 f"Model does not support temperature. Setting temperature to None for agent {agent_config['name']}")
 
-        if is_groq or (has_openai and not has_azure):
+        if is_gemini or is_groq or (has_openai and not has_azure):
             settings = OpenAIChatPromptExecutionSettings(
                 function_choice_behavior=FunctionChoiceBehavior.Auto(), seed=42, temperature=temperature)
         else:
@@ -274,7 +274,7 @@ def create_group_chat(
                                 chat_ctx=chat_ctx,
                                 app_ctx=app_ctx))
 
-    if is_groq or (has_openai and not has_azure):
+    if is_gemini or is_groq or (has_openai and not has_azure):
         if model_supports_temperature():
             settings = OpenAIChatPromptExecutionSettings(
                 function_choice_behavior=FunctionChoiceBehavior.Auto(), seed=42, temperature=0, response_format=ChatRule)
@@ -379,13 +379,42 @@ def create_group_chat(
 
     def evaluate_termination(result):
         logger.info(f"Termination function result: {result}")
-        rule = ChatRule.model_validate_json(str(result.value[0]))
-        return rule.verdict == "yes"
+        try:
+            val = str(result.value[0]).strip()
+            if "```" in val:
+                parts = val.split("```")
+                if len(parts) > 1:
+                    val = parts[1]
+                    if val.startswith("json"):
+                        val = val[4:]
+                    val = val.strip()
+            rule = ChatRule.model_validate_json(val)
+            return rule.verdict.lower() == "yes"
+        except Exception as e:
+            logger.warning(f"Error parsing termination verdict, fallback check: {e}")
+            val_lower = str(result.value[0]).lower() if result and getattr(result, "value", None) else ""
+            return "yes" if "yes" in val_lower else False
 
     def evaluate_selection(result):
         logger.info(f"Selection function result: {result}")
-        rule = ChatRule.model_validate_json(str(result.value[0]))
-        return rule.verdict if rule.verdict in [agent["name"] for agent in all_agents_config] else facilitator
+        try:
+            val = str(result.value[0]).strip()
+            if "```" in val:
+                parts = val.split("```")
+                if len(parts) > 1:
+                    val = parts[1]
+                    if val.startswith("json"):
+                        val = val[4:]
+                    val = val.strip()
+            rule = ChatRule.model_validate_json(val)
+            return rule.verdict if rule.verdict in [agent["name"] for agent in all_agents_config] else facilitator
+        except Exception as e:
+            logger.warning(f"Error parsing selection verdict, fallback agent match: {e}")
+            val_str = str(result.value[0]) if result and getattr(result, "value", None) else ""
+            for agent in all_agents_config:
+                if agent["name"].lower() in val_str.lower():
+                    return agent["name"]
+            return facilitator
 
     chat = AgentGroupChat(
         agents=agents,
